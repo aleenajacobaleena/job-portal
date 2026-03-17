@@ -9,17 +9,22 @@ Route::get('/', function () {
 
 Route::prefix('employee')->group(function(){
 
-Route::get('/register',[EmployeeAuthController::class,'showRegister']);
-Route::post('/register',[EmployeeAuthController::class,'register']);
+    // Auth
+    Route::get('/register',[EmployeeAuthController::class,'showRegister']);
+    Route::post('/register',[EmployeeAuthController::class,'register']);
 
-Route::get('/login',[EmployeeAuthController::class,'showLogin']);
-Route::post('/login',[EmployeeAuthController::class,'login']);
+    Route::get('/login',[EmployeeAuthController::class,'showLogin']);
+    Route::post('/login',[EmployeeAuthController::class,'login']);
 
-Route::middleware('employee')->group(function(){
+    // Protected Routes
+    Route::middleware('employee')->group(function(){
 
-Route::get('/dashboard',[EmployeeAuthController::class,'dashboard']);
-Route::get('/logout',[EmployeeAuthController::class,'logout']);
+        Route::get('/dashboard',[EmployeeAuthController::class,'dashboard']);
+        Route::get('/logout',[EmployeeAuthController::class,'logout']);
 
-});
+        Route::get('/profile',[EmployeeAuthController::class,'profile']);
+        Route::post('/profile',[EmployeeAuthController::class,'updateProfile']);
+
+    });
 
 });

@@ -83,14 +83,50 @@ return response()->json([
 
 }
     public function dashboard()
-    {
-        return view('employee.dashboard');
+{
+    if(!session()->has('employee_id')){
+        return redirect('/employee/login');
     }
+
+    return view('employee.dashboard');
+}
 
     public function logout()
     {
         Session::flush();
         return redirect('/');
     }
+    public function profile()
+{
+    $employee = \App\Models\Employee::find(session('employee_id'));
+
+    return view('employee.profile',compact('employee'));
+}
+public function updateProfile(Request $request)
+{
+    $employee = \App\Models\Employee::find(session('employee_id'));
+
+    // Image upload
+    if($request->hasFile('image')){
+        $image = time().'.'.$request->image->extension();
+        $request->image->move(public_path('uploads'),$image);
+        $employee->image = $image;
+    }
+
+    // Resume upload
+    if($request->hasFile('resume')){
+        $resume = time().'_'.$request->resume->getClientOriginalName();
+        $request->resume->move(public_path('uploads'),$resume);
+        $employee->resume = $resume;
+    }
+
+    $employee->phone = $request->phone;
+    $employee->skills = $request->skills;
+    $employee->experience = $request->experience;
+
+    $employee->save();
+
+    return redirect()->back()->with('success','Profile Updated');
+}
 
 }
